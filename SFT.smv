@@ -1,0 +1,18 @@
+MODULE main
+
+VAR
+	colorScheme: {primary, secondary, tertiary};
+	primaryColor1: {red, yellow, blue};
+	primaryColor2: {red, yellow, blue};
+ASSIGN
+	init(colorScheme) := primary;
+	next(colorScheme) := case
+			(colorScheme = primary) & (primaryColor1 = red) & (primaryColor2 = yellow): secondary;
+			(colorScheme = primary) & (primaryColor1 = red) & (primaryColor2 = blue): secondary;
+			(colorScheme = primary) & (primaryColor1 = yellow) & (primaryColor2 = blue): secondary;
+			colorScheme = secondary: primary;
+			colorScheme = tertiary: primary;
+			TRUE: primary;
+			esac;
+
+	
