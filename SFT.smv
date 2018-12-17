@@ -1,18 +1,39 @@
 MODULE main
 
 VAR
-	colorScheme: {primary, secondary, tertiary};
-	primaryColor1: {red, yellow, blue};
-	primaryColor2: {red, yellow, blue};
-ASSIGN
-	init(colorScheme) := primary;
-	next(colorScheme) := case
-			(colorScheme = primary) & (primaryColor1 = red) & (primaryColor2 = yellow): secondary;
-			(colorScheme = primary) & (primaryColor1 = red) & (primaryColor2 = blue): secondary;
-			(colorScheme = primary) & (primaryColor1 = yellow) & (primaryColor2 = blue): secondary;
-			colorScheme = secondary: primary;
-			colorScheme = tertiary: primary;
-			TRUE: primary;
-			esac;
-
+	-- current is a set of all colors
+	-- r, b, y is respectively red, blue, yellow
+	-- g, o, p is respectively green, orage, purple
+	-- gy, gb is respectively greenish-yellow, greenish-blue
+	-- oy, or is respectively orangish-yellow, orangish-red
+	-- pb, pr is respectively purplish-blue, purplish-red
+	current: {r, b, y, p, o, g, gy, gb, oy, or, pb, pr};
 	
+	-- Xcolor is a set of colors to combine with X color
+	rcolor: {b, y};
+	bcolor: {r, y};
+	ycolor: {r, b};
+	gcolor: {y, b};
+	ocolor: {y, r};
+	pcolor: {b, r};
+
+ASSIGN
+	-- init current with primary colors
+	init(current) := {r, b, y};
+	-- next stage of current is defined by combination of current + Xcolor
+	next(current):= case
+		(current = r) & (rcolor = b) : p;
+		(current = r) & (rcolor = y) : o;
+		(current = b) & (bcolor = r) : p;
+		(current = b) & (bcolor = y) : g;
+		(current = y) & (ycolor = r) : o;
+		(current = y) & (ycolor = b) : g;
+		(current = g) & (gcolor = y) : gy;
+		(current = g) & (gcolor = b) : gb;
+		(current = o) & (ocolor = y) : oy;
+		(current = o) & (ocolor = r) : or;
+		(current = p) & (pcolor = b) : pb;
+		(current = p) & (pcolor = r) : pr;
+		-- default: current is a tertiary color
+		TRUE: current;
+	esac;
