@@ -70,9 +70,6 @@ LTLSPEC  G (cor = verde  ->  Y ((cor = verde) | (cor = amarelo) | (cor = azul)))
 -- Globalmente, quando a cor for roxo, teremos que a cor passada foi roxo, vermelho ou azul
 LTLSPEC  G (cor = roxo  ->  Y ((cor = roxo) | (cor = vermelho) | (cor = azul)));
 
--- Globalmente, quando a cor for roxo, teremos que a cor passada foi roxo, vermelho ou azul
-LTLSPEC  G (cor = roxo  ->  Y ((cor = roxo) | (cor = vermelho) | (cor = azul)));
-
 -- Globalmente, quando a cor for azul-arroxeado, teremos que a cor passada foi roxo, azul-arroxeado
 LTLSPEC  G (cor = azul-arroxeado  ->  Y ((cor = azul-arroxeado) | (cor = roxo)));
 
