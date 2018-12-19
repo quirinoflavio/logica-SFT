@@ -1,0 +1,42 @@
+MODULE main
+    VAR
+        cor : {sem-cor,                                  -- estado inicial
+               vermelho, amarelo, azul,                  -- cores primárias
+               roxo, laranja, verde,                     -- cores secundárias
+               vermelho-alaranjado, amarelo-alaranjado,  -- cores terciárias
+               vermelho-arroxeado, azul-arroxeado,       -- cores terciárias
+               amarelo-esverdeado, azul-esverdeado};     -- cores terciárias
+        
+        mixer : process misturador(cor);
+        
+    ASSIGN
+        init(cor) := sem-cor;
+        
+        -- Propriedades
+        SPEC !(cor = {vermelho, amarelo, azul} -> EF cor sas= vermelho-arroxeado);
+        
+MODULE misturador(cor)
+    ASSIGN
+        next(cor) :=
+            case
+                (cor = sem-cor) : {amarelo, vermelho, azul};
+                (cor = vermelho) : {laranja, roxo, vermelho};
+                (cor = amarelo) : {laranja, verde, amarelo};
+                (cor = azul) : {roxo, verde, azul};
+                (cor = roxo) : {vermelho-arroxeado, azul-arroxeado, roxo};
+                (cor = verde) : {amarelo-esverdeado, azul-esverdeado, verde};
+                (cor = laranja) : {vermelho-alaranjado, amarelo-alaranjado, laranja};
+                (cor = vermelho-arroxeado) : vermelho-arroxeado;
+                (cor = azul-arroxeado) : azul-arroxeado;
+                (cor = amarelo-esverdeado) : amarelo-esverdeado;
+                (cor = azul-esverdeado) : azul-esverdeado;
+                (cor = vermelho-alaranjado) : vermelho-alaranjado;
+                (cor = amarelo-alaranjado) : amarelo-alaranjado;
+            esac;
+    
+    FAIRNESS
+        running
+        
+-- Cores primárias misturadas resultam em cores secundárias.
+-- Cores secundárias misturadas com primárias resultam em terciárias.
+-- Cores misturadas consigo mesmas resultam em si mesmas.
