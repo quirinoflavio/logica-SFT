@@ -12,8 +12,7 @@ MODULE main
     ASSIGN
         init(cor) := sem-cor;
         
-        -- Propriedades
-        SPEC !(cor = {vermelho, amarelo, azul} -> EF cor sas= vermelho-arroxeado);
+        -- Propriedades:
         
 MODULE misturador(cor)
     ASSIGN
