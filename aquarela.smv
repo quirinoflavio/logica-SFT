@@ -39,3 +39,33 @@ MODULE misturador(cor)
 -- Cores primárias misturadas resultam em cores secundárias.
 -- Cores secundárias misturadas com primárias resultam em terciárias.
 -- Cores misturadas consigo mesmas resultam em si mesmas.
+
+
+-- Propriedades
+
+-- Para todos os caminhos a partir da cor vermelho, os próximos não terão a cor verde
+SPEC    AG (cor = vermelho -> AX (cor != verde));
+
+-- Para todos os caminhos a partir da cor amarelo, os próximos não terão a cor roxo
+SPEC    AG (cor = amarelo  -> AX (cor != roxo));
+
+-- Para todos os caminhos a partir da cor azul, os próximos não terão a cor laranja
+SPEC    AG (cor = azul     -> AX (cor != laranja));
+
+-- Para todos os caminhos a partir da cor verde, os próximos não terão cores vermelho, roxo ou laranja
+SPEC    AG (cor = verde    -> AX !((cor = vermelho) | (cor = roxo) | (cor = laranja)));
+
+-- Para todos os caminhos a partir da cor laranja, os próximos não terão cores azul, roxo ou verde
+SPEC    AG (cor = laranja  -> AX !((cor = azul) | (cor = roxo) | (cor = verde)));
+
+-- Para todos os caminhos a partir da cor roxo, os próximos não terão cores amarelo, verde ou laranja
+SPEC    AG (cor = roxo     -> AX !((cor = amarelo) | (cor = verde) | (cor = laranja)));
+
+-- Globalmente, quando a cor for laranja, teremos que a cor passada foi laranja, amarelo ou vermelho
+LTLSPEC  G (cor = laranja  ->  Y ((cor = laranja) | (cor = amarelo) | (cor = vermelho)));
+
+-- Globalmente, quando a cor for verde, teremos que a próxima cor 
+-- só poderá ser azul-esverdeado, amarelo-esverdeado ou verde
+LTLSPEC  G (cor = verde    ->  X ((cor = azul-esverdeado) | (cor = amarelo-esverdeado) | (cor = verde)));
+
+
