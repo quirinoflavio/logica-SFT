@@ -1,0 +1,74 @@
+MODULE main
+
+VAR
+	-- current is a set of all colors
+	-- r, b, y is respectively red, blue, yellow
+	-- g, o, p is respectively green, orage, purple
+	-- gy, gb is respectively greenish-yellow, greenish-blue
+	-- oy, or is respectively orangish-yellow, orangish-red
+	-- pb, pr is respectively purplish-blue, purplish-red
+	current: {nocolor,
+            r, b, y, p, o, g, gy, gb, oy, or, pb, pr,
+            mr,mb,my,mp,mo,mg,mgy,mgb,moy,mor,mpb,mpr};
+    op: {r,b,y,m}; -- red, blue, yellow, make color.
+	
+ASSIGN
+	
+    init(current) := nocolor;
+	
+    next(current):= case
+    --  Primary colors
+		(current = nocolor) & (op = b) : b;
+        (current = nocolor) & (op = r) : r;
+        (current = nocolor) & (op = y) : y;
+		
+    --  From blue
+        (current = b) & (op = r): p;
+        (current = b) & (op = y): g;
+        (current = b) & (op = m): mb;
+
+    --  From red
+        (current = r) & (op = b): p;
+        (current = r) & (op = y): o;
+        (current = r) & (op = m): mr;
+
+    --  From yellow
+        (current = y) & (op = b): g;
+        (current = y) & (op = r): o;
+        (current = y) & (op = m): my;
+
+    --  From purple
+        (current = p) & (op = b): pb;
+        (current = p) & (op = r): pr;
+        (current = p) & (op = m): mp;
+
+    --  From orange
+        (current = o) & (op = r): or;
+        (current = o) & (op = y): oy;
+        (current = o) & (op = m): mo;
+
+    --  From green
+        (current = g) & (op = y): gy;
+        (current = g) & (op = b): gb;
+        (current = g) & (op = m): mg;
+
+    --  From greenish-yellow
+        (current = gy): mgy;
+
+    --  From greenish-blue
+        (current = gb): mgb;
+
+    --  From orangish-yellow
+        (current = oy): moy;
+
+    --  From orangish-yellow
+        (current = or): mor;
+
+    --  From purplish blue
+        (current = pb): mpb;
+
+    --  From purplish red
+        (current = pr): mpr;
+
+		TRUE: current;
+	esac;
