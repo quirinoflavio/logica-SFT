@@ -1,0 +1,104 @@
+MODULE main
+    VAR
+        cor : {sem-cor,                                  -- estado inicial
+               vermelho, amarelo, azul,                  -- cores primárias
+               roxo, laranja, verde,                     -- cores secundárias
+               vermelho-alaranjado, amarelo-alaranjado,  -- cores terciárias
+               vermelho-arroxeado, azul-arroxeado,       -- cores terciárias
+               amarelo-esverdeado, azul-esverdeado};     -- cores terciárias
+        
+        mixer : process misturador(cor);
+        
+    ASSIGN
+        init(cor) := sem-cor;
+        
+        -- Propriedades:
+        
+MODULE misturador(cor)
+    ASSIGN
+        next(cor) :=
+            case
+                (cor = sem-cor) : {amarelo, vermelho, azul};
+                (cor = vermelho) : {laranja, roxo, vermelho};
+                (cor = amarelo) : {laranja, verde, amarelo};
+                (cor = azul) : {roxo, verde, azul};
+                (cor = roxo) : {vermelho-arroxeado, azul-arroxeado, roxo};
+                (cor = verde) : {amarelo-esverdeado, azul-esverdeado, verde};
+                (cor = laranja) : {vermelho-alaranjado, amarelo-alaranjado, laranja};
+                (cor = vermelho-arroxeado) : vermelho-arroxeado;
+                (cor = azul-arroxeado) : azul-arroxeado;
+                (cor = amarelo-esverdeado) : amarelo-esverdeado;
+                (cor = azul-esverdeado) : azul-esverdeado;
+                (cor = vermelho-alaranjado) : vermelho-alaranjado;
+                (cor = amarelo-alaranjado) : amarelo-alaranjado;
+            esac;
+    
+    FAIRNESS
+        running
+        
+-- Cores primárias misturadas resultam em cores secundárias.
+-- Cores secundárias misturadas com primárias resultam em terciárias.
+-- Cores misturadas consigo mesmas resultam em si mesmas.
+
+
+-- Propriedades
+
+-- Para todos os caminhos a partir da cor vermelho, os próximos não terão a cor verde
+SPEC    AG (cor = vermelho -> AX (cor != verde));
+
+-- Para todos os caminhos a partir da cor amarelo, os próximos não terão a cor roxo
+SPEC    AG (cor = amarelo  -> AX (cor != roxo));
+
+-- Para todos os caminhos a partir da cor azul, os próximos não terão a cor laranja
+SPEC    AG (cor = azul     -> AX (cor != laranja));
+
+-- Para todos os caminhos a partir da cor verde, os próximos não terão cores vermelho, roxo ou laranja
+SPEC    AG (cor = verde    -> AX !((cor = vermelho) | (cor = roxo) | (cor = laranja)));
+
+-- Para todos os caminhos a partir da cor laranja, os próximos não terão cores azul, roxo ou verde
+SPEC    AG (cor = laranja  -> AX !((cor = azul) | (cor = roxo) | (cor = verde)));
+
+-- Para todos os caminhos a partir da cor roxo, os próximos não terão cores amarelo, verde ou laranja
+SPEC    AG (cor = roxo     -> AX !((cor = amarelo) | (cor = verde) | (cor = laranja)));
+
+-- Globalmente, quando a cor for laranja, teremos que a cor passada foi laranja, amarelo ou vermelho
+LTLSPEC  G (cor = laranja  ->  Y ((cor = laranja) | (cor = amarelo) | (cor = vermelho)));
+
+-- Globalmente, quando a cor for laranja, teremos que a cor passada foi verde, amarelo ou azul
+LTLSPEC  G (cor = verde  ->  Y ((cor = verde) | (cor = amarelo) | (cor = azul)));
+
+-- Globalmente, quando a cor for roxo, teremos que a cor passada foi roxo, vermelho ou azul
+LTLSPEC  G (cor = roxo  ->  Y ((cor = roxo) | (cor = vermelho) | (cor = azul)));
+
+-- Globalmente, quando a cor for roxo, teremos que a cor passada foi roxo, vermelho ou azul
+LTLSPEC  G (cor = roxo  ->  Y ((cor = roxo) | (cor = vermelho) | (cor = azul)));
+
+-- Globalmente, quando a cor for azul-arroxeado, teremos que a cor passada foi roxo, azul-arroxeado
+LTLSPEC  G (cor = azul-arroxeado  ->  Y ((cor = azul-arroxeado) | (cor = roxo)));
+
+-- Globalmente, quando a cor for vermelho-arroxeado, teremos que a cor passada foi roxo, vermelho-arroxeado
+LTLSPEC  G (cor = vermelho-arroxeado  ->  Y ((cor = vermelho-arroxeado) | (cor = roxo)));
+
+-- Globalmente, quando a cor for azul-esverdeado, teremos que a cor passada foi verde, azul-esverdeado
+LTLSPEC  G (cor = azul-esverdeado  ->  Y ((cor = azul-esverdeado) | (cor = verde)));
+
+-- Globalmente, quando a cor for amarelo-esverdeado, teremos que a cor passada foi verde, amarelo-esverdeado
+LTLSPEC  G (cor = amarelo-esverdeado  ->  Y ((cor = amarelo-esverdeado) | (cor = verde)));
+
+-- Globalmente, quando a cor for vermelho-alaranjado, teremos que a cor passada foi laranja, vermelho-alaranjado
+LTLSPEC  G (cor = vermelho-alaranjado  ->  Y ((cor = vermelho-alaranjado) | (cor = laranja)));
+
+-- Globalmente, quando a cor for amarelo-alaranjado, teremos que a cor passada foi laranja, amarelo-alaranjado
+LTLSPEC  G (cor = amarelo-alaranjado  ->  Y ((cor = amarelo-alaranjado) | (cor = laranja)));
+
+-- Globalmente, quando a cor for verde, teremos que a próxima cor 
+-- só poderá ser azul-esverdeado, amarelo-esverdeado ou verde
+LTLSPEC  G (cor = verde    ->  X ((cor = azul-esverdeado) | (cor = amarelo-esverdeado) | (cor = verde)));
+
+-- Globalmente, quando a cor for roxo, teremos que a próxima cor 
+-- só poderá ser azul-arroxeado, vermelho-arroxeado ou roxo
+LTLSPEC  G (cor = roxo    ->  X ((cor = vermelho-arroxeado) | (cor = azul-arroxeado) | (cor = roxo)));
+
+-- Globalmente, quando a cor for laranja, teremos que a próxima cor 
+-- só poderá ser amarelo-alaranjado, vermelho-alaranjado ou laranja
+LTLSPEC  G (cor = laranja    ->  X ((cor = vermelho-alaranjado) | (cor = amarelo-alaranjado) | (cor = laranja)));

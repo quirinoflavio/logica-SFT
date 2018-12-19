@@ -15,6 +15,7 @@ VAR
 ASSIGN
 	
     init(current) := nocolor;
+    init(op) := {r,b,y};
 	
     next(current):= case
     --  Primary colors
@@ -72,3 +73,9 @@ ASSIGN
 
 		TRUE: current;
 	esac;
+
+-- read_model -i testes/SFT-simple.smv
+-- flatten_hierarchy
+-- encode_variables
+-- build_model
+
